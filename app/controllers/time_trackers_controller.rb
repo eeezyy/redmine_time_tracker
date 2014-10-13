@@ -11,25 +11,65 @@ class TimeTrackersController < ApplicationController
         end
     end
 
+    def list_resume
+        logger.info "78547"
+        print "74587"
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
+        if @time_tracker.nil? or not @time_tracker.paused
+            flash[:error] = l(:no_time_tracker_suspended)
+            redirect_to :back
+        else
+            @time_tracker.started_on = Time.now
+            @time_tracker.paused = false
+            if @time_tracker.save
+                render_menu_list
+                #redirect_to :back
+            else
+                flash[:error] = l(:resume_time_tracker_error)
+            end
+        end
+    end
+
+    def list_suspend
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
+#        @time_tracker = current
+        if @time_tracker.nil? or @time_tracker.paused
+            flash[:error] = l(:no_time_tracker_running)
+            redirect_to :back
+        else
+            @time_tracker.time_spent = @time_tracker.hours_spent
+            @time_tracker.paused = true
+            if @time_tracker.save
+              render_menu_list
+                #redirect_to :back
+            else
+                flash[:error] = l(:suspend_time_tracker_error)
+            end
+        end
+    end
+    
     def start
-        @time_tracker = current
-        if @time_tracker.nil?
+      print "test"
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
+#        if @time_tracker.nil?
             @issue = Issue.find(:first, :conditions => { :id => params[:issue_id] })
             @time_tracker = TimeTracker.new({ :issue_id => @issue.id })
 
             if @time_tracker.save
                 apply_status_transition(@issue) unless Setting.plugin_redmine_time_tracker['status_transitions'] == nil
                 render_menu
+                #redirect_to :controller => '/time_trackers', :action => 'index'
+#                render_menu
             else
                 flash[:error] = l(:start_time_tracker_error)
             end
-        else
-            flash[:error] = l(:time_tracker_already_running_error)
-        end
+#        else
+#            flash[:error] = l(:time_tracker_already_running_error)
+#        end
     end
 
     def resume
-        @time_tracker = current
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
         if @time_tracker.nil? or not @time_tracker.paused
             flash[:error] = l(:no_time_tracker_suspended)
             redirect_to :back
@@ -38,6 +78,7 @@ class TimeTrackersController < ApplicationController
             @time_tracker.paused = false
             if @time_tracker.save
                 render_menu
+                #redirect_to :back
             else
                 flash[:error] = l(:resume_time_tracker_error)
             end
@@ -45,7 +86,8 @@ class TimeTrackersController < ApplicationController
     end
 
     def suspend
-        @time_tracker = current
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
+#        @time_tracker = current
         if @time_tracker.nil? or @time_tracker.paused
             flash[:error] = l(:no_time_tracker_running)
             redirect_to :back
@@ -54,6 +96,7 @@ class TimeTrackersController < ApplicationController
             @time_tracker.paused = true
             if @time_tracker.save
                 render_menu
+                #redirect_to :back
             else
                 flash[:error] = l(:suspend_time_tracker_error)
             end
@@ -61,7 +104,7 @@ class TimeTrackersController < ApplicationController
     end
 
     def stop
-        @time_tracker = current
+        @time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
         if @time_tracker.nil?
             flash[:error] = l(:no_time_tracker_running)
             redirect_to :back
@@ -78,9 +121,9 @@ class TimeTrackersController < ApplicationController
         time_tracker = TimeTracker.find(:first, :conditions => { :id => params[:id] })
         if !time_tracker.nil?
             time_tracker.destroy
-            render :text => l(:time_tracker_delete_success), :content_type => 'text/html'
+            render :text => '<td colspan="5" class="msg">' + l(:time_tracker_delete_success) + '</td>', :content_type => 'text/html'
         else
-            render :text => l(:time_tracker_delete_fail), :content_type => 'text/html'
+            render :text => '<td colspan="5" class="msg">' + l(:time_tracker_delete_fail) + '</td>', :content_type => 'text/html'
         end
     end
 
@@ -89,6 +132,13 @@ class TimeTrackersController < ApplicationController
         @issue = Issue.find(:first, :conditions => { :id => params[:issue_id] })
         @time_tracker = current
         render :partial => 'embed_menu'
+    end
+    
+    def render_menu_list
+        @project = Project.find(:first, :conditions => { :id => params[:project_id] })
+        @issue = Issue.find(:first, :conditions => { :id => params[:issue_id] })
+        @time_tracker = current
+        render :partial => 'embed_menu_list'
     end
 
     def add_status_transition

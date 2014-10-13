@@ -33,6 +33,37 @@
                                 <td class="start-date"><%= format_time(time_tracker[:started_on]) %></td>
                                 <td class="spent-time"><%= time_tracker.time_spent_to_s %></td>
                                 <td class="buttons">
+                                <% if time_tracker.paused %>
+                                        <%# A time tracker is in pause, display the tracked issue, the time spent and the resume/stop actions %>
+                                        <%= link_to '#' + time_tracker.issue_id.to_s,
+                                            { :controller => '/issues', :action => 'show', :id => time_tracker.issue_id },
+                                            { :class => 'icon icon-pause-action_' }
+                                        %>
+                                         / <%= time_tracker.time_spent_to_s %> /
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'list_resume', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-start-action_', :title => l(:resume_time_tracker), :remote => true }
+                                        %>
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'stop', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-stop-action_', :title => l(:stop_time_tracker) }
+                                         %>
+                                    <% else %>
+                                        <%# A time tracker is running, display the tracked issue, the time spent and the suspend/stop actions %>
+                                        <%= link_to '#' + time_tracker.issue_id.to_s,
+                                            { :controller => '/issues', :action => 'show', :id => time_tracker.issue_id },
+                                            { :class => 'icon icon-clock' }
+                                        %>
+                                         / <%= time_tracker.time_spent_to_s %> /
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'list_suspend', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-pause-action_', :title => l(:suspend_time_tracker), :remote => true }
+                                        %>
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'stop', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-stop-action_', :title => l(:stop_time_tracker) }
+                                        %>
+                                    <% end %>
                                     <%= link_to l(:time_tracker_label_delete),
                                         { :controller => '/time_trackers', :action => 'delete', :id => time_tracker.id },
                                         { :class => 'icon icon-del', :remote => true, :id => "test_link" }
@@ -81,7 +112,39 @@
                                 <td class="start-date"><%= format_time(time_tracker[:started_on]) %></td>
                                 <td class="spent-time"><%= time_tracker.time_spent_to_s %></td>
                                 <td class="buttons">
+                                <% if time_tracker.paused %>
+                                        <%# A time tracker is in pause, display the tracked issue, the time spent and the resume/stop actions %>
+                                        <%= link_to '#' + time_tracker.issue_id.to_s,
+                                            { :controller => '/issues', :action => 'show', :id => time_tracker.issue_id },
+                                            { :class => 'icon icon-pause-action_' }
+                                        %>
+                                         / <%= time_tracker.time_spent_to_s %> /
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'resume', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-start-action_', :title => l(:resume_time_tracker), :remote => true }
+                                        %>
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'stop', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-stop-action_', :title => l(:stop_time_tracker) }
+                                         %>
+                                    <% else %>
+                                        <%# A time tracker is running, display the tracked issue, the time spent and the suspend/stop actions %>
+                                        <%= link_to '#' + time_tracker.issue_id.to_s,
+                                            { :controller => '/issues', :action => 'show', :id => time_tracker.issue_id },
+                                            { :class => 'icon icon-clock' }
+                                        %>
+                                         / <%= time_tracker.time_spent_to_s %> /
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'suspend', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-pause-action_', :title => l(:suspend_time_tracker), :remote => true }
+                                        %>
+                                        <%= link_to '',
+                                            { :controller => '/time_trackers', :action => 'stop', :id => time_tracker.id },
+                                            { :class => 'icon-action icon-stop-action_', :title => l(:stop_time_tracker) }
+                                        %>
+                                    <% end %>
                                     <% if User.current.allowed_to?(:delete_others_time_trackers, nil, :global => true) %>
+                                        <%= print "test" %>
                                         <%= link_to l(:time_tracker_label_delete),
                                             { :controller => '/time_trackers', :action => 'delete', :id => time_tracker.id },
                                             { :class => 'icon icon-del', :remote => true }

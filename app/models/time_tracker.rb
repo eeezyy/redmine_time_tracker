@@ -10,7 +10,7 @@ end
 
 class TimeTracker < ActiveRecord::Base
     belongs_to :user
-    has_one :issue
+    has_many :issue
 
     validates_presence_of :issue_id
 

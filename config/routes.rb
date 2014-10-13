@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   match 'time_trackers/start'  , :to => "time_trackers#start"
   match 'time_trackers/suspend', :to => "time_trackers#suspend"
   match 'time_trackers/resume' , :to => "time_trackers#resume"
+  match 'time_trackers/list_suspend', :to => "time_trackers#list_suspend"
+  match 'time_trackers/list_resume' , :to => "time_trackers#list_resume"
   match 'time_trackers/render_menu', :to => "time_trackers#render_menu"
   match 'time_trackers/add_status_transition', :to => "time_trackers#add_status_transition"
   match 'time_trackers/delete_status_transition', :to => "time_trackers#delete_status_transition"

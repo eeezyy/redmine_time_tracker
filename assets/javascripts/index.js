@@ -1,5 +1,6 @@
 function updateAfterDelete(event, data, status, xhr){
-  $(this).html('<td colspan="5" class="msg">' + data + '</td>');
+  //$(this).html('<td colspan="5" class="msg">' + data + '</td>');
+  $(this).html(data);
   updateMenu();
 };
 
