@@ -22,6 +22,7 @@
 
                     <tbody>
                         <% for time_tracker in @user_time_trackers %>
+                            <% if defined?(issue_from_id(time_tracker[:issue_id])) %>
                             <tr id="user-timetracker<%= time_tracker.id %>" class="<%= cycle('odd', 'even') %>">
                                 <% if time_tracker.zombie? %>
                                     <% has_zombie = true %>
@@ -71,6 +72,7 @@
                                     %>
                                 </td>
                             </tr>
+                            <% end %>
                         <% end %>
                     </tbody>
                 </table>
@@ -166,3 +168,4 @@
 <% if has_zombie %>
     <p class="legend icon icon-warning"><%= l(:time_tracker_zombie_legend) %></p>
 <% end %>
+
